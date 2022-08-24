@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+{% block html%}
+<html itemscope itemtype="https://schema.org/QAPage" class="html__responsive " lang="en">
+{% endblock %}
+{% load static %}
+{% load mathfilters %}
+{% load forum_extras %}
+{% block title %}{{quest.title}}{% endblock %}
+{% block metadescription %}
+<meta property="og:type" content="website">
+<meta property="og:url" content="/question/{{quest.id}}/{{quest.title|slugify}}">
+<meta property="og:site_name" content="Engone">
+<meta property="og:image" itemprop="image primaryImageOfPage" content="">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:domain" content="/">
+<meta name="twitter:title" property="og:title" itemprop="name" content="{{quest.title}}">
+<meta name="twitter:description" property="og:description" itemprop="description" content="{{ quest.detail|convert_markdown|truncatewords:40|safe }}">
+{% endblock %}
+{% block content %}
+
+<section class="hero-area bg-white shadow-sm overflow-hidden pt-10px pb-20px">
+    <span class="stroke-shape stroke-shape-1"></span>
+    <span class="stroke-shape stroke-shape-2"></span>
+    <span class="stroke-shape stroke-shape-3"></span>
+    <span class="stroke-shape stroke-shape-4"></span>
+    <span class="stroke-shape stroke-shape-5"></span>
+    <span class="stroke-shape stroke-shape-6"></span>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-12 pr-5">
+                <div style="text-align: right!important;" class="hero-btn-box py-1">
+                    <a href="{% url 'ask-question' %}" class="btn theme-btn theme-btn-sm">Ask a Question</a>
+                </div>
+            </div>
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section>
+<!--======================================
+        END HERO AREA
+======================================-->
+
+<!-- ================================
+         START QUESTION AREA
+================================= -->
+<section class="question-area pt-20px pb-10px">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9">
+                <div itemprop="mainEntity" itemscope itemtype="https://schema.org/Question" class="question-main-bar mb-50px">
+                    <link itemprop="image" href="/logo">
+                    <div class="question-highlight">
+                        <div class="media media-card shadow-none rounded-0 mb-0 bg-transparent p-0">
+                            <div class="media-body">
+                                <h5 itemprop="name" class="fs-20">{{quest.title}}</h5>
+                                <div class="meta d-flex flex-wrap align-items-center fs-13 lh-20 py-1">
+                                    <div class="pr-3">
+                                        <span>Asked</span>
+                                        <span itemprop="dateCreated" datetime="{{quest.add_time}}" class="text-black">{{ quest.add_time|timesince }} ago</span>
+                                    </div>
+                                    
+                                    <div class="pr-3">
+                                        <span class="pr-1">Viewed</span>
+                                        {% if 1000 <= quest.topic_views and quest.topic_views <= 1000000 %}
+                                        <span class="text-black">{{ quest.topic_views|div:1000|floatformat:2 }}k times</span>
+                                        {% elif quest.topic_views >= 1000000 %}
+                                        <span class="text-black">{{ quest.topic_views|div:1000000|floatformat:2 }}m times</span>
+                                        {% else %}
+                                        <span class="text-black">{{ quest.topic_views }} times</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="tags">
+                                    {% for tag in tags %}
+                                    <a href="/tag/{{tag|slugify}}" class="tag-link">{{tag}}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div><!-- end media -->
+                    </div><!-- end question-highlight -->
+                    <div class="question d-flex">
+                        <div class="votes votes-styled w-auto">
+                            <div class="">
+                                <a class="star" data-toggle="tooltip" data-placement="right" title="Bookmark this question."></a>
+                            </div>
+                        </div><!-- end votes -->
+                        <div class="question-post-body-wrap flex-grow-1">
+                            <div itemprop="text" class="question-post-body">
+                                <p>{{ quest.detail|convert_markdown|safe }}</p>
+                                {% if quest.image == 'pro_pic.png' %}
+                                
+                                {% else %}
+                                <a href="/images/{{quest.image}}"><img style="width:30%" src="/images/{{quest.image}}"></a>
+                                {% endif %}
+                            </div><!-- end question-post-body -->
+                            <div class="question-post-user-action">
+                               <div class="post-menu">
+                                    <div class="btn-group">
+                                        <a href="/question/{{quest.id}}/{{quest.title|slugify}}" rel="nofollow" itemprop="url" class="btn dropdown-toggle after-none" type="button" id="shareDropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Share</a>
+                                        <div class="dropdown-menu dropdown--menu dropdown--menu-2 mt-2" aria-labelledby="shareDropdownMenu">
+                                            <div class="py-3 px-4">
+                                                <h4 class="fs-15 pb-2">Share the link to this question</h4>
+                                                <form action="#" class="copy-to-clipboard">
+                                                    <span class="text-success-message">Link Copied!</span>
+                                                    <input type="text" class="form-control form--control form-control-sm copy-input" value="/question/{{quest.id}}/{{quest.title|slugify}}" readonly>
+                                                    <div class="btn-box pt-2 d-flex align-items-center justify-content-between">
+                                                        <a href="#" class="btn-text copy-btn">Copy link</a>
+                                                        <ul class="social-icons social-icons-sm">
+                                                            <li><a href="https://www.facebook.com/sharer/sharer.php?u={{object_or_url}}" class="bg-8 text-white shadow-none" target="_blank" title="Share link to this question on Facebook"><i class="la la-facebook"></i></a></li>
+                                                            <li><a href="#" class="bg-9 text-white shadow-none" title="Share link to this question on Twitter"><i class="la la-twitter"></i></a></li>
+                                                            <li><a href="#" class="bg-dark text-white shadow-none" title="Share link to this question on DEV"><i class="lab la-dev"></i></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div><!-- btn-group  -->
+                                    {% if request.user == quest.user %}
+                                    <a href="/edit-question/{{quest.id}}" class="btn">Edit</a>
+                                    {% endif %}
+                                    {% if request.user.is_authenticated %}
+                                    <form class="btn" action="" method="post">
+                                        {% csrf_token %}
+                                        {% if follow_btn_val == 'follow' %}
+                                        <input type="hidden" name="value" value="follow">
+                                        <button class="btn" type="submit">Follow</button>
+                                        {% else %}
+                                        <input type="hidden" name="value" value="unfollow">
+                                        <button class="btn" type="submit">Unfollow</button>
+                                        {% endif %}
+                                    </form>
+                                    {% endif%}
+                                </div><!-- end post-menu -->
+                                <div itemprop="author" itemscope itemtype="http://schema.org/Person" class="media media-card user-media owner align-items-center">
+                                    <a href="/user/{{quest.user.id}}/{{quest.user.username}}" class="media-img d-block">
+                                        <img src="{{quest.user.profile_pic.url}}" alt="{{quest.user.username}}">
+                                    </a>
+                                    <div class="media-body d-flex flex-wrap align-items-center justify-content-between">
+                                        <div>
+                                            <a href="/user/{{quest.user.id}}/{{quest.user.username}}"><h5 itemprop="name" class="pb-1">{{quest.user.username}}</h5></a>
+                                            <div class="stats fs-12 d-flex align-items-center lh-18">
+                                                {% if  1000 <= quest.user.reputation and quest.user.reputation <= 1000000 %}
+                                                <span class="text-black pr-2">{{quest.user.reputation|div:1000|floatformat:2}}k</span>
+                                                {% elif quest.user.reputation >= 1000000 %}
+                                                <span class="text-black pr-2">{{quest.user.reputation|div:1000000|floatformat:2}}m</span>
+                                                {% else %}
+                                                <span class="text-black pr-2">{{quest.user.reputation}}</span>
+                                                {% endif %}
+                                                <span class="pr-2 d-inline-flex align-items-center"><span class="ball gold"></span>{{quest.user.gold_badge}}</span>
+                                                <span class="pr-2 d-inline-flex align-items-center"><span class="ball silver"></span>{{quest.user.silver_badge}}</span>
+                                                <span class="pr-2 d-inline-flex align-items-center"><span class="ball"></span>{{quest.user.bronze_badge}}</span>
+                                            </div>
+                                        </div>
+                                        <small class="meta d-block text-right">
+                                            <span class="text-black d-block lh-18">asked</span>
+                                            <span class="d-block lh-18 fs-12">{{quest.add_time|timesince}} ago</span>
+                                        </small>
+                                    </div>
+                                </div><!-- end media -->
+                            </div><!-- end question-post-user-action -->
+                            
+                        </div><!-- end question-post-body-wrap -->
+                    </div><!-- end question -->
+                    <div class="subheader d-flex align-items-center justify-content-between">
+                        <div class="subheader-title">
+                            {% if  answers.count > 0 %}
+                            <h3 itemprop="answerCount" class="fs-16">
+                                <span>{{ answers.count }}</span> 
+                            Answer{{ answers|pluralize }}</h3>
+                            {% else %}
+                            <h3 class="fs-16">Be the first to answer in this topic !</h3>
+                            {% endif %}
+                        </div><!-- end subheader-title -->
+                    </div><!-- end subheader -->
+                    {% for answer in answers %}
+                    <div itemprop="acceptedAnswer" itemscope itemtype="https://schema.org/Answer" class="answer-wrap d-flex">
+                        <div class="votes votes-styled w-auto">
+                            <div class="upvotejs">
+                                {% csrf_token %}
+                                <a type="button" class="upvote upvote-on upvote-click" data-answer="{{answer.id}}" title="This question is useful"></a>
+                                
+                                <span class="count upvote-count-{{answer.id}}">{{answer.upvote_set.count|sub:answer.downvote_set.count}}</span>
+                                
+                                <a href="" type="button" class="downvote downvote-click" data-answer="{{answer.id}}" title="This question is not useful"></a>
+                                <hr>
+                            </div>
+                        </div><!-- end votes -->
+                        <div class="answer-body-wrap flex-grow-1">
+                            <div class="answer-body">
+                                <p itemprop="text">{{ answer.detail|convert_markdown|safe }}</p>
+
+                                {% if answer.image == 'pro_pic.png' %}
+                                
+                                {% else %}
+                                <a href="/images/{{answer.image}}"><img style="width:30%" src="/images/{{answer.image}}"></a>
+                                {% endif %}
+                                
+                            </div><!-- end answer-body -->
+
+                            <div class="question-post-user-action">
+                                <div class="post-menu">
+                                    <a href="#" class="btn">Edit</a>
+                                </div><!-- end post-menu -->
+                                <div class="media media-card user-media align-items-center">
+                                    <a href="/user/{{answer.user.id}}/{{answer.user.username}}" class="media-img d-block">
+                                        <img src="{{ answer.user.profile_pic.url }}" alt="avatar">
+                                    </a>
+                                    <div class="media-body d-flex align-items-center justify-content-between">
+                                        <div itemprop="author" itemscope itemtype="http://schema.org/Person">
+                                            <a href="/user/{{answer.user.id}}/{{answer.user.username}}"><h5 itemprop="name" class="pb-1">{{ answer.user|capfirst }}</h5></a>
+                                            <div class="stats fs-12 d-flex align-items-center lh-18">
+                                                {% if  1000 <= answer.user.reputation and answer.user.reputation <= 1000000 %}
+                                                <span class="text-black pr-2">{{answer.user.reputation|div:1000|floatformat:2}}k</span>
+                                                {% elif answer.user.reputation >= 1000000 %}
+                                                <span class="text-black pr-2">{{answer.user.reputation|div:1000000|floatformat:2}}m</span>
+                                                {% else %}
+                                                <span class="text-black pr-2">{{answer.user.reputation}}</span>
+                                                {% endif %}
+                                                <span class="pr-2 d-inline-flex align-items-center"><span class="ball gold"></span>{{ answer.user.gold_badge }}</span>
+                                                <span class="pr-2 d-inline-flex align-items-center"><span class="ball silver"></span>{{ answer.user.silver_badge }}</span>
+                                                <span class="pr-2 d-inline-flex align-items-center"><span class="ball"></span>{{ answer.user.bronze_badge }}</span>
+                                            </div>
+                                        </div>
+                                        <small class="meta d-block text-right">
+                                            <span class="text-black d-block lh-18">answered</span>
+                                            <span itemprop="dateCreated" datetime="{{answer.add_time}}" class="d-block lh-18 fs-12">{{answer.add_time|timesince}} ago</span>
+                                        </small>
+                                    </div>
+                                </div><!-- end media -->
+                                
+                            </div><!-- end question-post-user-action -->
+                            <div class="comments-wrap">
+                                <ul class="comments-list">
+                                    <span itemprop="commentCount" style="display:none;">{{answer.comment_set.all.count}} </span>
+                                    {% for comment in answer.comment_set.all %}
+                                    <li>
+                                        <div class="comment-body">
+                                            <span class="comment-copy">{{comment.comment}}</span>
+                                            <span class="comment-separated">-</span>
+                                            <a href="/user/{{comment.user.id}}/{{comment.user.username}}" class="comment-user owner" title="{{comment.user.reputation}} reputation" style="color:darkblue;">{{comment.user.username}}</a>
+                                            <span class="comment-separated">-</span>
+                                            <a href="#" class="comment-date">{{comment.add_time|timesince}} ago</a>
+                                        </div>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="comment-form">
+                                    <div class="comment-link-wrap text-center">
+                                        <a class="collapse-btn comment-link" data-toggle="collapse" href="#addCommentCollapseTwo-{{answer.id}}" role="button" aria-expanded="false" aria-controls="addCommentCollapseTwo-{{answer.id}}" title="Use comments to ask for more information or suggest improvements. Avoid answering questions in comments.">Add a comment</a>
+                                    </div>
+                                    <div class="collapse border-top border-top-gray mt-2 pt-3" id="addCommentCollapseTwo-{{answer.id}}">
+                                        <form method="post" class="row pb-3">
+                                            {% csrf_token %}
+                                            <div class="col-lg-12">
+                                                <h4 class="fs-16 pb-2">Leave a Comment</h4>
+                                                <div class="divider mb-2"><span></span></div>
+                                            </div><!-- end col-lg-12 -->
+                                            <div class="col-lg-12">
+                                                <div class="input-box">
+                                                    <label class="fs-13 text-black lh-20">Message</label>
+                                                    <div class="form-group">
+                                                        <textarea class="form-control form--control form-control-sm fs-13 comment-text-{{answer.id}}" rows="5" placeholder="Your comment here..."></textarea>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end col-lg-12 -->
+                                            <div class="col-lg-12">
+                                                <div class="input-box d-flex flex-wrap align-items-center justify-content-between">
+                                                    {% if user.is_authenticated %}
+                                                    <button class="btn theme-btn theme-btn-sm theme-btn-outline theme-btn-outline-gray save-comment" data-answer="{{answer.id}}" type="submit">Post Comment</button>
+                                                    {% else %}
+                                                    <a href="{% url 'login' %}" class="btn theme-btn theme-btn-sm theme-btn-outline theme-btn-outline-gray" type="button" rel="nofollow noopener">Login to Comment</a>
+                                                    {% endif %}
+                                                </div>
+                                            </div><!-- end col-lg-12 -->
+
+                                        </form>
+                                    </div><!-- end collapse -->
+                                </div>
+                            </div><!-- end comments-wrap -->
+                            
+                        </div><!-- end answer-body-wrap -->
+
+                    </div><!-- end answer-wrap -->
+                    {% endfor %}
+
+                    <div class="subheader">
+                        <div class="subheader-title">
+                            <h3 class="fs-16">Your Answer</h3>
+                        </div><!-- end subheader-title -->
+                    </div><!-- end subheader -->
+                    
+                    <div class="post-form">
+                        <form action="" method="post" class="pt-3" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="input-box">
+                                <label class="fs-14 text-black lh-20 fw-medium">Body</label>
+                                <div class="form-group">
+                                    {{ answerform.detail }}
+                                    {{ answerform.media }}
+                                </div>
+                            </div>
+                            <div class="input-box">
+                                <label class="fs-14 text-black fw-medium">Image</label>
+                                <div class="form-group">
+                                    <div class="file-upload-wrap file-upload-layout-2">
+                                        {{ answerform.image }}
+                                        <span class="file-upload-text d-flex align-items-center justify-content-center"><i class="la la-cloud-upload mr-2 fs-24"></i>Drop files here or click to upload.</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if user.is_authenticated %}
+                            <button class="btn theme-btn theme-btn-sm" type="submit">Post Your Answer </button>
+                            {% else %}
+                            <a href="{% url 'login' %}" class="btn theme-btn theme-btn-sm" rel="nofollow noopener">Join Engone</a>
+                            {% endif %}
+                        </form>
+                    </div>
+                    
+
+                </div><!-- end question-main-bar -->
+            </div><!-- end col-lg-9 -->
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <h3 class="fs-17 pb-3">Related Questions</h3>
+                            <div class="divider"><span></span></div>
+                            <div class="sidebar-questions pt-3">
+                                {% for quest in related_quest %}
+                                <div class="media media-card media--card media--card-2">
+                                    <div class="media-body">
+                                        <h5><a href="/question/{{quest.id}}/{{quest.title|slugify}}">{{quest.title}}</a>
+                                        <span class="item-multiplier fs-13">
+                                            <span>×</span>
+                                            {% if  1000 <= quest.topic_views and quest.topic_views <= 1000000 %}
+                                            <i style="color:green;font-size:13px;">{{quest.topic_views|div:1000|floatformat:2}}k views</i></h5>
+                                            {% elif quest.topic_views >= 1000000 %}
+                                            <i style="color:green;font-size:13px;">{{quest.topic_views|div:1000000|floatformat:1}}m views</i></h5>
+                                            {% else %}
+                                            <i style="color:green;font-size:13px;">{{quest.topic_views}} views</i></h5>
+                                            {% endif %}
+                                        <small class="meta">
+                                            <span class="pr-1">{{quest.add_time|timesince}} ago</span>
+                                            <span class="pr-1">. by</span>
+                                            <a href="#" class="author">{{quest.user.username}}</a>
+                                        </small>
+                                    </div>
+                                </div><!-- end media -->
+                                {% endfor %}
+                                
+                            </div><!-- end sidebar-questions -->
+                        </div>
+                    </div><!-- end card -->
+                    {% include 'includetem\sidecol3.html' %}
+                    
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center pb-3">
+                                <svg class="mr-2" width="18" height="18" viewBox="0 0 18 18" fill="#6c727c"><path d="M1 6l8 5 8-5V4L9 9 1 4c0-1.1.9-2 2-2h12c1.09 0 2 .91 2 2v10c0 1.09-.91 2-2 2H3c-1.09 0-2-.91-2-2V6z"></path></svg>
+                                <h3 class="fs-17">Love this site?</h3>
+                            </div>
+                            <div class="divider"><span></span></div>
+                            <p class="fs-14 lh-20 py-3">Get the <span class="text-dark fw-medium">weekly newsletter!</span> In it, you'll get:</p>
+                            <ul class="generic-list-item generic-list-item-bullet fs-14 pb-3">
+                                <li class="lh-20">The week's top questions and answers</li>
+                                <li class="lh-20">Important community announcements</li>
+                                <li class="lh-20">Questions that need answers</li>
+                            </ul>
+                            <a href="{% url 'register' %}" class="btn theme-btn theme-btn-gray w-100" type="button" rel="nofollow noopener">Sign up for the digest</a>
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end sidebar -->
+            </div><!-- end col-lg-3 -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section><!-- end question-area -->
+{% endblock content %}
+

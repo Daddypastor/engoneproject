@@ -1,0 +1,44 @@
+{% load static %}
+
+<div class="tab-pane fade" id="badges" role="tabpanel" aria-labelledby="badges-tab">
+                            <div class="filters pb-1">
+                                <h3 class="fs-17 fw-medium pb-2">Badges</h3>
+                                <p class="fs-15 lh-24 pb-1">Besides gaining reputation with your questions and answers, you receive badges for being especially helpful. Badges appears on your profile page, questions & answers.</p>
+                            </div><!-- end filters -->
+                            <hr><br>
+                            <div class="badges-main-bar">
+                                <div class="badges-snippet">
+                                    <div class="row">
+                                        {% for badge in badges %}
+                                        <div class="col-lg-4">
+                                            <div class="card card-item">
+                                                <div class="card-body p-1">
+                                                    <div class="badge-item">
+                                                        <a href="#" class="badge badge-md badge-dark d-inline-flex align-items-center">
+                                                            {% if badge.typename_id == 3 %}
+                                                            <span class="ball"></span> 
+                                                            {% elif badge.typename_id == 2 %}
+                                                            <span class="ball bg-gray"></span>
+                                                            {% elif badge.typename_id == 1 %}
+                                                            <span class="ball bg-3"></span>
+                                                            {% endif %}
+
+                                                            {{badge.title}}</a>
+                                                        <span class="item-multiplier fs-13 fw-medium">
+                                                            <span>×</span>
+                                                            <span>{{badge.badge_input_set.count}}</span>
+                                                        </span>
+                                                        <p class="fs-13 lh-18 pt-2 text-black-50"> &nbsp; {{badge.desc}}</p>
+                                                    </div>
+                                                </div><!-- end card-body -->
+                                            </div><!-- end card -->
+                                        </div><!-- end col-lg-4 -->
+                                        
+                                     {% endfor %}   
+                                    </div><!-- end row -->
+                                </div><!-- end badges-snippet -->
+                                <a class="btn theme-btn theme-btn-sm text-white w-100" href="{% url 'badges' %}" role="button">
+                                    <span class="collapse-btn-hide">Show All Badges</span>
+                                </a>
+                            </div><!-- end badges-main-bar -->
+                        </div><!-- end tab-pane -->

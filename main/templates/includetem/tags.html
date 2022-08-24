@@ -1,0 +1,29 @@
+{% load static %}
+<div class="tab-pane fade" id="tags" role="tabpanel" aria-labelledby="tags-tab">
+                            <div class="filters pb-1">
+                                <h3 class="fs-17 fw-medium pb-2">Tags</h3>
+                                <p class="fs-15 lh-24 pb-1">A tag is a keyword or label that categorizes your question with other, similar questions.
+                                    Using the right tags makes it easier for others to find and answer your question.
+                                </p>
+                            </div><!-- end filters -->
+                            <div class="tags-main-bar">
+                                    <div class="tags-snippet">
+                                        <hr>
+                                        <div class="row">
+                                        {% for tag in tagg %}
+                                            <div class="col-3 col-lg-2">
+                                                <div style="padding: 5px;">
+                                                    <div class="tags">
+                                                        <a href="/tag/{{tag.name|slugify}}" class="tag-link tag-link-md tag-link-blue">{{tag.name}}</a>
+
+                                                    </div>
+                                                </div><!-- end card-body -->
+                                            </div><!-- end col-lg-3 -->
+                                        {%endfor%}   
+                                        </div><!-- end row -->
+                                </div><!-- end tags-snippet -->
+                                <a class="btn theme-btn theme-btn-sm text-white w-100" href="{% url 'tags' %}" role="button">
+                                    <span class="collapse-btn-hide">Show All Tags</span>
+                                </a>
+                            </div><!-- end tags-main-bar -->
+                        </div><!-- end tab-pane -->

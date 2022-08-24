@@ -1,0 +1,37 @@
+{% load static %}
+{% load mathfilters %}
+<div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+                            <div class="filters pb-4">
+                                <h3 class="fs-20 fw-medium pb-1">Users</h3>
+                                <hr>
+                            </div><!-- end filters -->
+                            <div class="users-main-bar">
+                                <div class="users-snippet">
+                                    <div class="row">
+                                        {% for user in users %}
+                                        <div class="col-6 col-lg-4">
+                                            <div class="media media-card p-3">
+                                                <a href="/user/{{user.id}}/{{user.username}}" class="media-img d-inline-block">
+                                                    <img src="{{user.profile_pic.url}}" alt="company logo">
+                                                </a>
+                                                <div class="media-body">
+                                                    <h5 class="fs-16 fw-medium"><a href="/user/{{user.id}}/{{user.username}}">{{user.username}}</a></h5>
+                                                    <small class="meta d-block lh-24 pb-1"><span>{{user.country}}</span></small>
+                                                    {% if  1000 <= user.reputation and user.reputation <= 1000000 %}
+                                                    <p class="fw-medium fs-15 text-black-50 lh-18">{{user.reputation|div:1000|floatformat:2}}k</p>
+                                                    {% elif user.reputation >= 1000000 %}
+                                                    <p class="fw-medium fs-15 text-black-50 lh-18">{{user.reputation|div:1000000|floatformat:1}}m</p>
+                                                    {% else %}
+                                                    <p class="fw-medium fs-15 text-black-50 lh-18">{{user.reputation}}</p>
+                                                    {% endif %}
+                                                </div><!-- end media-body -->
+                                            </div><!-- end media -->
+                                        </div><!-- end col-lg-6 -->
+                                    {%endfor%}    
+                                    </div><!-- end row -->
+                                </div><!-- end users-snippet -->
+                                <a class="btn theme-btn theme-btn-sm text-white w-100" href="{% url 'users' %}" role="button">
+                                    <span class="collapse-btn-hide">Show All Users</span>
+                                </a>
+                            </div><!-- end users-main-bar -->
+                        </div><!-- end tab-pane -->

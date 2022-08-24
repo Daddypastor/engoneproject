@@ -1,0 +1,51 @@
+{% load mathfilters %}
+                    {% if trend_quest %}
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <h3 class="fs-17 pb-3">Trending Questions</h3>
+                            <div class="divider"><span></span></div>
+                            <div class="sidebar-questions pt-3">
+                                {% for quest in trend_quest %}
+                                <div class="media media-card media--card media--card-2">
+                                    <div class="media-body">
+                                        <h5><a href="/question/{{quest.id}}/{{quest.title|slugify}}">{{quest.title}}</a>
+                                        <span class="item-multiplier fs-13">
+                                            <span>×</span>
+                                            {% if  1000 <= quest.topic_views and quest.topic_views <= 1000000 %}
+                                            <i style="color:green;font-size:13px;">{{quest.topic_views|div:1000|floatformat:2}}k views</i></h5>
+                                            {% elif quest.topic_views >= 1000000 %}
+                                            <i style="color:green;font-size:13px;">{{quest.topic_views|div:1000000|floatformat:1}}m views</i></h5>
+                                            {% else %}
+                                            <i style="color:green;font-size:13px;">{{quest.topic_views}} views</i></h5>
+                                            {% endif %}
+                                        <small class="meta">
+                                            <span class="pr-1">{{quest.add_time|timesince}} ago</span>
+                                            <span class="pr-1">. by</span>
+                                            <a href="/user/{{quest.user.id}}/{{quest.user.username}}" class="author">{{quest.user.username}}</a>
+                                        </small>
+                                    </div>
+                                </div><!-- end media -->
+                                {% endfor %}
+                                
+                            </div><!-- end sidebar-questions -->
+                        </div>
+                        {% endif %}
+                    </div><!-- end card -->
+                    <!--
+                    <div class="card card-item">
+                        <div class="card-body">
+                            <h3 class="fs-17 pb-3">Our Trending Blogs</h3>
+                            <div class="divider"><span></span></div>
+                            <div class="sidebar-questions pt-3">
+                                {% for quest in trends_blog %}
+                                <div class="media media-card media--card media--card-2">
+                                    <div class="media-body">
+                                        <h5><a href="/blogs/{{quest.id}}/{{quest.title|slugify}}">{{quest.title}}</a>
+                                    </div>
+                                </div><!-- end media 
+                                {% endfor %}
+                                
+                            </div><!-- end sidebar-questions
+                        </div>
+                    </div><!-- end card -->
+                    

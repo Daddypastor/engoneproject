@@ -1,0 +1,304 @@
+
+{% load static %}
+<!DOCTYPE html>
+{% block html%}
+<html lang="en">
+{% endblock %}
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="TechyDevs">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% block metadescription %}
+        <meta name="description" content="Engone is the largest, most trusted online community for engineers to learn, share their knowledge, and build their careers.">
+    {% endblock %}
+
+    <title>{% block title %}{% endblock %}</title>
+
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" sizes="16x16" href="{% static 'images/' %}favicon.png">
+
+    
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'css/' %}bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/' %}line-awesome.css">
+    <link rel="stylesheet" href="{% static 'css/' %}owl.carousel.min.css">
+    <link rel="stylesheet" href="{% static 'css/' %}owl.theme.default.min.css">
+    <link rel="stylesheet" href="{% static 'css/' %}jquery-te-1.4.0.css">
+    <link rel="stylesheet" href="{% static 'css/' %}upvotejs.min.css">
+    <link rel="stylesheet" href="{% static 'css/' %}selectize.css">
+    <link rel="stylesheet" href="{% static 'css/' %}style.css">
+    <!-- end inject -->
+</head>
+<body>
+
+
+<!--======================================
+        START HEADER AREA
+    ======================================-->
+<header style="background-color:#fff4fe;" class="header-area">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-2">
+                <div class="logo-box">
+                    <a href="{% url 'home' %}" class="logo"><img src="{% static 'images/' %}engineeringsmall.png" alt="Engone logo"></a>
+                    <a href="{% url 'home' %}" style="color:#8c43ff;font-size: 20px;">Engone</a>
+                    <div class="user-action">
+                        <div class="search-menu-toggle icon-element icon-element-xs shadow-sm mr-1" data-toggle="tooltip" data-placement="top" title="Search">
+                            <i class="la la-search"></i>
+                        </div>
+                        <div class="off-canvas-menu-toggle icon-element icon-element-xs shadow-sm" data-toggle="tooltip" data-placement="top" title="Main menu">
+                            <i class="la la-bars"></i>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end col-lg-2 -->
+            <div class="col-lg-10">
+                <div class="menu-wrapper border-left border-left-gray pl-4 justify-content-end">
+                    <nav class="menu-bar mr-auto">
+                        <ul>
+                            <li>
+                                <a style="font-size: 13px; font-weight: 700;" href="{% url 'question-list' %}">Questions</a>
+                            </li>
+                            
+                            <li>
+                                <a style="font-size: 13px; font-weight: 700;" href="{% url 'about' %}">About</a>
+                            </li>
+                            <li>
+                                <a style="font-size: 13px; font-weight: 700;" href="{% url 'faq' %}">FAQS</a>
+                            </li>
+                            <li>
+                                <a style="font-size: 13px; font-weight: 700;" href="{% url 'contact' %}">Contact</a>
+                            </li>
+                            <!--
+                            <li>
+                                <a style="font-size: 13px; font-weight: 700; display: none" href="#">Blogs</a>
+                            </li>
+                            <li>
+                                <a style="font-size: 13px; font-weight: 700;" href="#">Videos</a>
+                            </li>    
+                            <li>
+                                <a style="font-size: 13px; font-weight: 700;" href="#">Projects</a>
+                            </li>
+                            <li>
+                                <a style="font-size: 13px; font-weight: 700;" href="#">Chat</a>
+                            </li>   -->
+                        </ul>
+                    </nav>            
+                    {% block search %}
+                    <form method="get" action="" class="mr-4">
+                        <div class="form-group mb-0">
+                             <input style="height: 35px" class="form-control form--control form--control-bg-gray" type="text" name="q" values="{{request.GET.q}}" placeholder="Type your search words...">
+                            <button class="form-btn" type="submit" id="button-addon2"><i class="la la-search"></i></button>
+                        </div>
+                    </form>
+                    {% endblock %}
+                    <div class="nav-right-button">
+                        {% if user.is_authenticated %}
+                        <ul class="user-action-wrap d-flex align-items-center">
+                            <li class="dropdown">
+                                {% if newnot %}
+                                <span class="ball red ball-lg noti-dot"></span>
+                                {% endif %}
+                                <a class="nav-link dropdown-toggle dropdown--toggle" href="#" id="notificationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="la la-bell"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown--menu dropdown-menu-right mt-3 keep-open" aria-labelledby="notificationDropdown">
+                                    <h6 class="dropdown-header"><i class="la la-bell pr-1 fs-16"></i>Notifications</h6>
+                                    <div class="dropdown-divider border-top-gray mb-0"></div>
+                                    <div class="dropdown-item-list">
+                                        {% for not in notif %}
+                                        <a class="dropdown-item" href="/question/{{not.quest.id}}/{{not.quest.title|slugify}}">
+                                            <div class="media media-card media--card shadow-none mb-0 rounded-0 align-items-center bg-transparent">
+                                                <div class="media-img media-img-sm flex-shrink-0">
+                                                    <img src="{{not.action_user.profile_pic.url}}" alt="avatar">
+                                                </div>
+                                                <div class="media-body p-0 border-left-0">
+                                                    {% if not.action == 'follow' %}
+                                                    <h5 class="fs-14 fw-regular">{{not.action_user}} is following your post</h5>
+                                                    {% elif not.action == 'answer' %}
+                                                    <h5 class="fs-14 fw-regular">{{not.action_user}} answered your post</h5> 
+                                                    {% elif not.action == 'following' %}
+                                                    <h5 class="fs-14 fw-regular">{{not.action_user}} answered post you are following</h5> 
+                                                    {% endif %}
+                                                    <small class="meta d-block lh-24">
+                                                        <span>{{not.add_time|timesince}} ago</span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                    <a class="dropdown-item pb-1 border-bottom-0 text-center btn-text fw-regular" href="{% url 'notifications' %}">View All Notifications <i class="la la-arrow-right icon ml-1"></i></a>
+                                </div>
+                            </li>
+                            <li class="dropdown user-dropdown">
+                                <a class="nav-link dropdown-toggle dropdown--toggle pl-2" href="#" id="userMenuDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="media media-card media--card shadow-none mb-0 rounded-0 align-items-center bg-transparent">
+                                        <div class="media-img media-img-xs flex-shrink-0 rounded-full mr-2">
+                                            <img src="{{ user.profile_pic.url }}" alt="" class="rounded-full">
+                                        </div>
+                                        <div class="media-body p-0 border-left-0">
+                                            <h5 class="fs-14">{{ user.username }}</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="dropdown-menu dropdown--menu dropdown-menu-right mt-3 keep-open" aria-labelledby="userMenuDropdown">
+                                    <h6 class="dropdown-header">Hi, {{ user.username }}</h6>
+                                    <div class="dropdown-divider border-top-gray mb-0"></div>
+                                    <div class="dropdown-item-list">
+                                        <a class="dropdown-item" href="/user/{{user.id}}/{{user.username}}"><i class="la la-user mr-2"></i>Profile</a>
+                                        <a class="dropdown-item" href="{% url 'profile-edit' %}"><i class="la la-gear mr-2"></i>Settings</a>
+                                        <a class="dropdown-item" href="{% url 'logout' %}"><i class="la la-power-off mr-2"></i>Log out</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn theme-btn theme-btn-outline mr-2"><i class="la la-sign-in mr-1"></i> Login</a>
+                        <a href="{% url 'register' %}" class="btn theme-btn"><i class="la la-user mr-1"></i> Sign up</a>
+                    {% endif %}    
+                    </div><!-- end nav-right-button -->
+                </div><!-- end menu-wrapper -->
+            </div><!-- end col-lg-10 -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+    <div class="off-canvas-menu custom-scrollbar-styled">
+        <br>
+        {% if user.is_authenticated %}
+                        <ul class="user-action-wrap d-flex align-items-center">
+                            <li class="dropdown user-dropdown">
+                                <a class="nav-link dropdown-toggle dropdown--toggle pl-2" href="#" id="userMenuDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <div class="media media-card media--card shadow-none mb-0 rounded-0 align-items-center bg-transparent">
+                                        <div class="media-img media-img-xs flex-shrink-0 rounded-full mr-2">
+                                            <img src="{{ user.profile_pic.url }}" alt="" class="rounded-full">
+                                        </div>
+                                        <div class="media-body p-0 border-left-0">
+                                            <h5 class="fs-14">{{ user.username }}</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="dropdown-menu dropdown--menu dropdown-menu-right mt-3 keep-open" aria-labelledby="userMenuDropdown">
+                                    <h6 class="dropdown-header">Hi, {{ user.username }}</h6>
+                                    <div class="dropdown-divider border-top-gray mb-0"></div>
+                                    <div class="dropdown-item-list">
+                                        <a class="dropdown-item" href="/user/{{user.id}}/{{user.username}}"><i class="la la-user mr-2"></i>Profile</a>
+                                        <a class="dropdown-item" href="{% url 'notifications' %}"><i class="la la-bell mr-2"></i>Notifications</a>
+                                        <a class="dropdown-item" href="referrals.html"><i class="la la-user-plus mr-2"></i>Referrals</a>
+                                        <a class="dropdown-item" href="{% url 'profile-edit' %}"><i class="la la-gear mr-2"></i>Settings</a>
+                                        <a class="dropdown-item" href="{% url 'logout' %}"><i class="la la-power-off mr-2"></i>Log out</a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dropdown">
+                                <span class="ball red ball-lg noti-dot"></span>
+                                <a class="nav-link dropdown-toggle dropdown--toggle" href="#" id="notificationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="la la-bell"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown--menu dropdown-menu-right mt-3 keep-open" aria-labelledby="notificationDropdown">
+                                    <h6 class="dropdown-header"><i class="la la-bell pr-1 fs-16"></i>Notifications</h6>
+                                    <div class="dropdown-divider border-top-gray mb-0"></div>
+                                    <div class="dropdown-item-list">
+                                        <a class="dropdown-item" href="{% url 'notifications' %}">
+                                            <div class="media media-card media--card shadow-none mb-0 rounded-0 align-items-center bg-transparent">
+                                                <div class="media-img media-img-sm flex-shrink-0">
+                                                    <img src="images/img3.jpg" alt="avatar">
+                                                </div>
+                                                <div class="media-body p-0 border-left-0">
+                                                    <h5 class="fs-14 fw-regular">John Doe following your post</h5>
+                                                    <small class="meta d-block lh-24">
+                                                        <span>45 secs ago</span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <a class="dropdown-item pb-1 border-bottom-0 text-center btn-text fw-regular" href="{% url 'notifications' %}">View All Notifications <i class="la la-arrow-right icon ml-1"></i></a>
+                                </div>
+                            </li>
+                            
+                        </ul>
+                        {% endif %}
+        <div class="off-canvas-menu-close icon-element icon-element-sm shadow-sm" data-toggle="tooltip" data-placement="left" title="Close menu">
+            <i class="la la-times"></i>
+        </div><!-- end off-canvas-menu-close -->
+          <hr>
+        <ul class="generic-list-item off-canvas-menu-list">
+            <li>
+                <a style="font-size: 13px; font-weight: 700;" href="{% url 'question-list' %}">Questions</a>
+            </li>
+            
+            <li>
+                <a style="font-size: 13px; font-weight: 700;" href="{% url 'faq' %}">About</a>
+            </li>
+            <li>
+                <a style="font-size: 13px; font-weight: 700;" href="{% url 'about' %}">FAQS</a>
+            </li>
+            <li>
+                <a style="font-size: 13px; font-weight: 700;" href="{% url 'contact' %}">Contact</a>
+            </li>
+            <!--
+            <li>
+                <a style="font-size: 13px; font-weight: 700; display: none;" href="#">Blogs</a>
+            </li>
+            <li>
+                <a style="font-size: 13px; font-weight: 700;" href="#">Videos</a>
+            </li>    
+            <li>
+                <a style="font-size: 13px; font-weight: 700;" href="#">Projects</a>
+            </li>
+            <li>
+                <a style="font-size: 13px; font-weight: 700;" href="#">Chat</a>
+            </li>-->
+        </ul> 
+        {% if user.is_authenticated %} 
+        {% else %}   
+        <div class="off-canvas-btn-box px-4 pt-5 text-center">
+            <a href="{% url 'login' %}" class="btn theme-btn theme-btn-sm theme-btn-outline"><i class="la la-sign-in mr-1"></i> Login</a>
+            <span class="fs-15 fw-medium d-inline-block mx-2">Or</span>
+            <a href="{% url 'register' %}" class="btn theme-btn theme-btn-sm"><i class="la la-plus mr-1"></i> Sign up</a>
+        </div>
+        {% endif %}
+
+    </div><!-- end off-canvas-menu -->
+    {% block mobilesearch %}
+    <div class="mobile-search-form">
+        <div class="d-flex align-items-center">
+            <form method="get" class="flex-grow-1 mr-3">
+                <div class="form-group mb-0">
+                    <input class="form-control form--control pl-40px" type="text" name="q" values="{{request.GET.q}}" placeholder="Type your search words...">
+                    <span class="la la-search input-icon"></span>
+                </div>
+            </form>
+            <div class="search-bar-close icon-element icon-element-sm shadow-sm">
+                <i class="la la-times"></i>
+            </div><!-- end off-canvas-menu-close -->
+        </div>
+    </div><!-- end mobile-search-form -->
+   {% endblock %} 
+    <!-- end mobile-search-form -->
+    <div class="body-overlay"></div>
+</header><!-- end header-area -->
+
+{% block content %}
+<div class="container">
+<div class="row">
+    <div class="col-12">
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+</div>
+
+{% endblock content %}
+
+{% include "footer.html" %}

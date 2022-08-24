@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+{% load mathfilters %}
+{% block title %}Popular- Questions{% endblock %}
+{% block content %}
+{% load forum_extras %}
+<section class="question-area pt-20px pb-10px">
+    <div class="container">
+    	<div class="col-lg-9 d-flex flex-wrap align-items-center justify-content-between pb-3">
+			<h3 class="fs-22 fw-medium">All Questions</h3>
+			<a href="/ask-question" class="btn theme-btn theme-btn-sm">Ask Question</a>
+		</div>
+        <div class="row">
+            <div class="col-lg-9 px-0">
+                <div class="question-main-bar border-left border-left-gray pb-50px">
+                    <div class="filters pb-1 pl-1 d-flex align-items-center justify-content-between">
+                    	<div class="btn-group btn--group mb-3" role="group" aria-label="Filter button group">
+                    		<a href="{% url 'question-list' %}" class="btn">Newest</a>
+                    		<a href="#" class="btn active">Popular</a>
+                    		<a href="{% url 'recommend-list' %}" class="btn">Recommended</a>
+                    		<a href="{% url 'unanswered' %}" class="btn">Unanswered</a>
+                		</div>
+                    </div><!-- end filters -->
+                    <div class="questions-snippet border-top border-top-gray">
+                        {% for quest in quests %}
+                                    <div class="media media-card media--card align-items-center">
+                                        <div class="votes">
+                                            <div class="vote-block d-flex align-items-center justify-content-between" title="Votes">
+                                                {% if  1000 <= quest.topic_views and quest.topic_views <= 1000000 %}
+                                                <span style="color:green;font-size: 11px;" class="vote-counts">{{quest.topic_views|div:1000|floatformat:2}}k</span>
+                                                {% elif quest.topic_views >= 1000000 %}
+                                                <span style="color:green;font-size: 11px;" class="vote-counts">{{quest.topic_views|div:1000000|floatformat:1}}m</span>
+                                                {% else %}
+                                                <span style="color:green;font-size: 11px;" class="vote-counts">{{quest.topic_views}}</span>
+                                                {% endif %}
+                                                <span> <i class="la la-eye"></i></span>
+                                            </div>
+                                            <hr>
+                                            {% if quest.answer_set.count > 0 %}
+                                            <div class="votes answered-accepted">
+                                                <div class="answer-block d-flex align-items-center justify-content-between" title="Votes">
+                                                    <span class="vote-counts">{{quest.answer_set.count}}&nbsp;</span>
+                                                    <span class="answer-icon"></span>
+                                                </div>
+                                            </div>
+                                            {% else %}
+                                            <div class="answer-block d-flex align-items-center justify-content-between" title="Answers">
+                                                <span class="vote-counts">{{quest.answer_set.count}}</span>
+                                                <span class="answer-icon"></span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="media-body">
+                                            <h5><a href="/question/{{quest.id}}/{{quest.title|slugify}}">{{quest.title}}</a></h5>
+                                            
+                                            <small class="meta">
+                                            	<p>{{ quest.detail|convert_markdown|truncatewords:15|safe }}</p>
+                                                <span class="pr-1">{{quest.add_time|timesince}} ago</span>
+                                                <a href="/user/{{quest.user.id}}/{{quest.user.username}}" class="author">
+                                        		<img width="15px" height="15px" src="{{quest.user.profile_pic.url}}" alt="avatar">
+
+                                                {{quest.user.username}}</a>
+                                            </small>
+                                            <div class="tags">
+                                                {% for tag in quest.tags %}
+                                                <a href="/tag/{{tag|slugify}}" class="tag-link">{{tag}}</a>
+                                                {% endfor %}
+                                            </div>
+                                            
+                                        </div>
+                                    </div><!-- end media -->
+                                    {% endfor %} 
+                    </div><!-- end questions-snippet -->
+                    <div class="pager d-flex flex-wrap align-items-center justify-content-between pt-10px px-3">
+                        <div>
+                        	{% if quests.has_other_pages %}
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination generic-pagination pr-1">
+                                	{% if quests.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link"  href="?page={{quests.previous_page_number}}" aria-label="Previous">
+                                            <span aria-hidden="true"><i class="la la-arrow-left"></i></span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    {% for i in quests.paginator.page_range %}
+                                    {% if quests.number == i %}
+                                    <li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% if quests.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{quests.next_page_number}}" aria-label="Next">
+                                            <span aria-hidden="true"><i class="la la-arrow-right"></i></span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                            {% endif %}
+                            <p class="fs-13 pt-2">Showing 1-25 results of {{quests|length}} questions</p>
+                        </div>
+                    </div>
+                </div><!-- end question-main-bar -->
+            </div><!-- end col-lg-7 -->
+            <div class="col-lg-3">
+                <div class="sidebar">
+                    <br><br>
+                   {% include 'includetem\sidecol3.html' %}
+                </div><!-- end sidebar -->
+            </div><!-- end col-lg-3 -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section>
+{% endblock content %}

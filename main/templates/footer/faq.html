@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}FAQS{% endblock %}
+{% block content %}
+
+
+<section class="hero-area bg-white shadow-sm pt-20px pb-20px">
+    <span class="icon-shape icon-shape-1"></span>
+    <span class="icon-shape icon-shape-2"></span>
+    <span class="icon-shape icon-shape-3"></span>
+    <span class="icon-shape icon-shape-4"></span>
+    <span class="icon-shape icon-shape-5"></span>
+    <span class="icon-shape icon-shape-6"></span>
+    <span class="icon-shape icon-shape-7"></span>
+    <div class="container">
+        <div class="hero-content text-center">
+            <h2 class="section-title pb-3">Frequently Asked Questions</h2>
+            <p class="section-desc">Find out everything you need to get started by taking the tour. <br>
+                If you still have questions contact us:
+                <a href="mailto:emmaexcellent030@gmail.com" class="text-color hover-underline">contact us</a>
+            </p>
+        </div><!-- end hero-content -->
+    </div><!-- end container -->
+</section>
+<!--======================================
+        END HERO AREA
+======================================-->
+
+<!--======================================
+        START FAQ AREA
+======================================-->
+<section class="faq-area pt-20px pb-20px">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div id="accordion" class="generic-accordion">
+                    {% for faq in faqs %}
+                    <div class="card">
+                        <div class="card-header" id="headingTwo">
+                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo-{{faq.id}}" aria-expanded="false" aria-controls="collapseTwo">
+                                <span>{{faq.faq}}</span>
+                                <i class="la la-angle-down collapse-icon"></i>
+                            </button>
+                        </div>
+                        <div id="collapseTwo-{{faq.id}}" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                                <p class="fs-15 lh-24">{{faq.detail}}</p>
+                            </div>
+                        </div>
+                    </div><!-- end card -->
+                    {% endfor %}
+                </div><!-- end accordion -->
+            </div><!-- end col-lg-8 -->
+            <div class="col-lg-4">
+                <form method="post" class="card card-item">
+                	{% csrf_token %}
+                    <div class="card-body">
+                        <div class="form-group">
+                            <h3 class="fs-17 pb-3">if you still need help contact us</h3>
+                            <div class="divider"><span></span></div>
+                        </div><!-- end form-group -->
+                        <div class="form-group">
+                            <label class="fs-14 text-black fw-medium lh-20">Name</label>
+                            {{form.name}}
+                        </div><!-- end form-group -->
+                        <div class="form-group">
+                            <label class="fs-14 text-black fw-medium lh-20">Email <span class="text-gray fs-13">(Address never shown publicly)</span></label>
+                            {{form.email}}
+                        </div><!-- end form-group -->
+                        <div class="form-group">
+                            <label class="fs-14 text-black fw-medium lh-20">Phone Number</span></label>
+                            {{form.phone}}
+                        </div><!-- end form-group -->
+                        <div class="form-group">
+                            <label class="fs-14 text-black fw-medium lh-20">Message</label>
+                            {{form.message}}
+                        </div><!-- end form-group -->
+                        <div class="form-group mb-0">
+                            <button class="btn theme-btn mt-2" type="submit">Send Message <i class="la la-arrow-right icon ml-1"></i></button>
+                        </div><!-- end form-group -->
+                    </div><!-- end card-body -->
+                </form>
+            </div><!-- end col-lg-4 -->
+        </div><!-- end row -->
+    </div><!-- end container -->
+</section>
+
+{% endblock content %}

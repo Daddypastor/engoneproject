@@ -21,11 +21,12 @@ def home(request):
     badges = Badge.objects.all().order_by('title')[:9]
     questions = Question.objects.all().order_by('-topic_views')
     tags=[]
-    for quest in questions:
-        qtags=[tag.strip() for tag in quest.tags.split(',')]
-        for tag in qtags:
-            if tag not in tags:
-                tags.append(tag)
+    if questions.count() > 0:
+        for quest in questions:
+            qtags=[tag.strip() for tag in quest.tags.split(',')]
+            for tag in qtags:
+                if tag not in tags:
+                    tags.append(tag)
     # Fetch Questions
     tag_with_count=[]
     for tag in tags:

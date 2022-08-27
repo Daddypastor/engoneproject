@@ -42,9 +42,8 @@ def home(request):
 
     page_num=request.GET.get('page',1)
     quests=paginator.page(page_num)
-    if quests.count() > 0:
-        for quest in quests:
-            quest.tags = quest.tags.split(',')
+    for quest in quests:
+        quest.tags = quest.tags.split(',')
 
     notif=[]    
     if request.user.is_authenticated:    

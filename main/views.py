@@ -21,12 +21,11 @@ def home(request):
     badges = Badge.objects.all().order_by('title')[:9]
     questions = Question.objects.all().order_by('-topic_views')
     tags=[]
-    if questions.count() > 0:
-        for quest in questions:
-            qtags=[tag.strip() for tag in quest.tags.split(',')]
-            for tag in qtags:
-                if tag not in tags:
-                    tags.append(tag)
+    for quest in questions:
+        qtags=[tag.strip() for tag in quest.tags.split(',')]
+        for tag in qtags:
+            if tag not in tags:
+                tags.append(tag)
     # Fetch Questions
     tag_with_count=[]
     for tag in tags:
@@ -43,8 +42,9 @@ def home(request):
 
     page_num=request.GET.get('page',1)
     quests=paginator.page(page_num)
-    for quest in quests:
-        quest.tags = quest.tags.split(',')
+    if quests.count() > 0:
+        for quest in quests:
+            quest.tags = quest.tags.split(',')
 
     notif=[]    
     if request.user.is_authenticated:    

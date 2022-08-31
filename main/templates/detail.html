@@ -289,7 +289,7 @@
                     </div><!-- end subheader -->
                     
                     <div class="post-form">
-                        <form action="" method="post" class="pt-3" enctype="multipart/form-data">
+                        <form action="/question/{{quest.id}}/{{quest.title|slugify}}" method="post" class="pt-3" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="input-box">
                                 <label class="fs-14 text-black lh-20 fw-medium">Body</label>

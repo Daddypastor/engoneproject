@@ -45,9 +45,11 @@ def home(request):
     for quest in quests:
         quest.tags = quest.tags.split(',')
 
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
-        notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        notif = Notification.objects.filter(user = request.user).order_by('-id')[:4]
+        newnot = Notification.objects.filter(user = request.user, is_read = False)
     return render(request,'home.html',{
         'quests':quests,
         'cats':cats,
@@ -58,7 +60,7 @@ def home(request):
         'trend_quest':trend_quest,
         'tagg':tagg,
         'badges':badges,
-        'notif':notif,
+        'notif':notif,'newnot':newnot,
         
         })
 
@@ -84,16 +86,18 @@ def home_search(request):
     trend_quest= Question.objects.order_by('-topic_views')[:5]
     for quest in quests:
         quest.tags = quest.tags.split(',')
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
         notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        newnot = Notification.objects.filter(user = request.user, is_read = False) 
     return render(request,'search/home-search.html',{
         'searched':searched,
         'quests':quests,
         'quest.tags':quest.tags,
         'trend_quest':trend_quest,
         'tagg':tagg,
-        'notif':notif,
+        'notif':notif,'newnot':newnot,
         
         })   
 
@@ -125,15 +129,17 @@ def question_list(request):
     quests=paginator.page(page_num)
     for quest in quests:
         quest.tags = quest.tags.split(',')
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
         notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        newnot = Notification.objects.filter(user = request.user, is_read = False) 
     return render(request,'quest_page/quest-list.html',{
         'searched':searched,
         'quests':quests,
         'quest.tags':quest.tags,
         'trend_quest':trend_quest,
-        'tagg':tagg,'notif':notif,
+        'tagg':tagg,'notif':notif,'newnot':newnot,
         
         })    
 
@@ -165,13 +171,15 @@ def popular_quest(request):
     quests=paginator.page(page_num)
     for quest in quests:
         quest.tags = quest.tags.split(',')
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
         notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        newnot = Notification.objects.filter(user = request.user, is_read = False) 
     return render(request,'quest_page/pop-list.html',{
         'quests':quests,
         'quest.tags':quest.tags,
-        'tagg':tagg,'notif':notif,
+        'tagg':tagg,'notif':notif,'newnot':newnot,
         
         })
 
@@ -212,14 +220,16 @@ def recommend_quest(request):
     quests=paginator.page(page_num)
     for quest in quests:
         quest.tags = quest.tags.split(',')
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
         notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        newnot = Notification.objects.filter(user = request.user, is_read = False) 
     return render(request,'quest_page/recom-list.html',{
         'quests':quests,
         'quest.tags':quest.tags,
         'trend_quest':trend_quest,
-        'tagg':tagg,'notif':notif,
+        'tagg':tagg,'notif':notif,'newnot':newnot,
         
         })                           
 
@@ -252,14 +262,16 @@ def unanswer(request):
     quests=paginator.page(page_num)
     for quest in quests:
         quest.tags = quest.tags.split(',')
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
         notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        newnot = Notification.objects.filter(user = request.user, is_read = False) 
     return render(request,'quest_page/unanswered.html',{
         'quests':quests,
         'quest.tags':quest.tags,
         'trend_quest':trend_quest,
-        'tagg':tagg,'notif':notif,
+        'tagg':tagg,'notif':notif,'newnot':newnot,
         
         })    
 
@@ -304,7 +316,10 @@ def detail(request,id,slug):
             if answer.user == quest.user:
                 Badge_Input.objects.create(typename_id = 3, user = answer.user, badge_id = 12)
             Notification.objects.create(user = quest.user, quest=quest, action_user = request.user, action= 'answer')
-            Notification.objects.create(user = quest.user, quest=quest, action_user= request.user, action= 'following')
+            ex_follow = QuestFollower.objects.filter(quest = quest)
+            for nott in ex_follow:
+                Notification.objects.create(user = nott.follower, quest=quest, action_user= request.user, action= 'following')
+            
             messages.success(request,'Answer has been submitted.')
         value = request.POST.get('value') 
         if value == 'follow':
@@ -312,25 +327,24 @@ def detail(request,id,slug):
             Notification.objects.create(user = quest.user, quest=quest, action_user = request.user, action= 'follow')
         elif value == 'unfollow':
             quest_followers = QuestFollower.objects.filter(quest = quest, follower = request.user).delete()     
-    questFollower = QuestFollower.objects.filter(quest = quest)
-    questfollower = []
-    for i in questFollower:
-        questfollower = i.follower
-    if request.user == questfollower:
+    questFollower = QuestFollower.objects.filter(quest = quest, follower=request.user)
+    if questFollower:
         follow_btn_val = 'unfollow' 
     else:
         follow_btn_val = 'follow' 
 
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
-        notif = Notification.objects.filter(user = request.user).order_by('-id')[:4]
+        notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        newnot = Notification.objects.filter(user = request.user, is_read = False)
     return render(request,'detail.html',{
         'quest':quest,
         'tags':tags,
         'answers':answers,
         'answerform':answerform,
         'trend_quest':trend_quest,
-        'related_quest':related_quest,'notif':notif,
+        'related_quest':related_quest,'notif':notif,'newnot':newnot,
         'follow_btn_val':follow_btn_val,
 
     }) 
@@ -362,9 +376,11 @@ def category_quest(request,cat_id,title):
         }
         tag_with_count.append(tag_data)
     tagg = tag_with_count[:5]
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
-        notif = Notification.objects.filter(user = request.user).order_by('-id')[:4]
+        notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        newnot = Notification.objects.filter(user = request.user, is_read = False)
     return render(request, 'category.html',
         {'quests':quests,'cats':cats,'category':category,
         'quest.tags':quest.tags,'tagg':tagg,'trend_quest':trend_quest,
@@ -555,16 +571,18 @@ def profile(request,id,username):
     userpk.bronze_badge = int(bronze.count())
     userpk.total_badge = int(total_badge)
     userpk.save()
-    notif=[]    
+    notif=[]
+    newnot=[]    
     if request.user.is_authenticated:    
-        notif = Notification.objects.filter(user = request.user).order_by('-id')[:4]
+        notif = Notification.objects.filter(user = request.user).order_by('-id')[:4] 
+        newnot = Notification.objects.filter(user = request.user, is_read = False)
     return render(request,'registration/profile2.html',{
         'userpk':userpk,
         'quests':quests,'answers':answers,'ans':ans,'comments':comments,
         'upvotes':upvotes,'downvotes':downvotes,
         'total_reached':total_reached,'reput':reput,'overall':overall,
         'user_gold':user_gold,'user_silver':user_silver,'user_bronze':user_bronze,
-        'gold':gold,'silver':silver,'bronze':bronze,'notif':notif,
+        'gold':gold,'silver':silver,'bronze':bronze,'notif':notif,'newnot':newnot,
     })
 
 def users(request):
@@ -691,6 +709,8 @@ def terms(request):
 def notifications(request):
     questfollow = Notification.objects.filter(user = request.user).order_by('-id')
     notif = Notification.objects.filter(user = request.user).order_by('-id')[:5]
+    newnot = Notification.objects.filter(user = request.user, is_read = False)
+    Notification.objects.filter(user = request.user,is_read = False).update(is_read = True)
     if request.method == 'POST':
         question = request.POST.get('question')
         action_user = request.POST.get('action_user')
@@ -698,7 +718,6 @@ def notifications(request):
         post = request.POST.get('post') 
         if post == 'yes':
             Notification.objects.filter(user= request.user, quest = question, action_user= action_user, action= action).delete() 
-
     paginator=Paginator(questfollow,15)
 
     page_num=request.GET.get('page',1)
@@ -706,5 +725,5 @@ def notifications(request):
     trend_quest= Question.objects.order_by('-topic_views')[:5]           
     return render(request, 'notifications.html', {
         'questfollow':questfollow,'notif':notif,
-        'trend_quest':trend_quest,
+        'trend_quest':trend_quest,'newnot':newnot,
         })

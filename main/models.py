@@ -8,8 +8,8 @@ from django.template.defaultfilters import slugify
 # Custom User Model
 
 class Category(models.Model):
-    title= models.CharField(max_length=100, null=True)
-    icon = models.CharField(max_length=100, null=True, blank=True)
+    title= models.CharField(max_length=500, null=True)
+    icon = models.CharField(max_length=500, null=True, blank=True)
     description=models.CharField(max_length=800, null=True, blank=True)
 
     def __str__(self):
@@ -72,11 +72,11 @@ class MailMessage(models.Model):
 # Question Model
 class Question(models.Model):
     user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
-    title=models.CharField(max_length=300)
+    title=models.CharField(max_length=500)
     detail=RichTextField()
     tags=models.TextField(default='')
     category= models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
-    image = models.ImageField(default="pro_pic.png", null=True, blank=True)
+    image = models.ImageField(upload_to="question/", default="pro_pic.png", null=True, blank=True)
     answer_alarm = models.BooleanField(default=True)
     agree_PP= models.BooleanField(default=False, blank=False)
     add_time=models.DateTimeField(auto_now_add=True)
@@ -140,7 +140,7 @@ class Notification(models.Model):
 
 class BadgeType(models.Model):
     title = models.CharField(max_length=20)
-    desc = models.CharField(max_length=50, blank=True)    
+    desc = models.CharField(max_length=500, blank=True)    
 
     def __str__(self):
         return self.title
@@ -148,7 +148,7 @@ class BadgeType(models.Model):
 class Badge(models.Model):
     typename = models.ForeignKey(BadgeType, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=50) 
-    desc = models.CharField(max_length=300) 
+    desc = models.CharField(max_length=500) 
 
     def __str__(self):
         return self.title
@@ -170,7 +170,7 @@ class Contact(models.Model):
         return self.name
 
 class Faq(models.Model):
-    faq = models.CharField(max_length=300)
+    faq = models.CharField(max_length=500)
     details = RichTextField()   
 
     def __str__(self):
